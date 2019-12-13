@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
+import Header from './components/layouts/Header';
+import Footer from './components/layouts/Footer';
+
 import Home from './components/Home';
 import Results from './components/Results';
 import NotFound from './components/NotFound';
@@ -8,6 +11,7 @@ import NotFound from './components/NotFound';
 const App = () => {
   return (
     <div className="app">
+      <Header />
       <BrowserRouter>
         <Switch>
           <Route path="/home" exact component={Home} />
@@ -16,6 +20,7 @@ const App = () => {
           <Route component={NotFound} />
         </Switch>
       </BrowserRouter>
+      <Footer />
     </div>
   );
 };
