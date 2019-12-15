@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 import Header from './components/layouts/Header';
 import Footer from './components/layouts/Footer';
@@ -7,6 +8,8 @@ import Footer from './components/layouts/Footer';
 import Home from './components/Home';
 import Results from './components/Results';
 import NotFound from './components/NotFound';
+
+axios.defaults.baseURL = 'https://findfalcone.herokuapp.com';
 
 const App = () => {
   return (

@@ -1,11 +1,17 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
-const Results = () => {
+const Results = ({ history, timeTaken, planet }) => {
   return (
     <div>
-      Results
+      <div>
+        Success! Congratulations on Finding Falcone. King Shat is mighty pleased.
+      <span>Time taken: {timeTaken}</span>
+        <span>Planet found: {planet}</span>
+      </div>
+      <button onClick={() => history.push('/home')}>Start Again</button>
     </div>
   );
 };
 
-export default Results;
+export default withRouter(Results);

@@ -12,15 +12,17 @@ code {
     monospace;
 }
 
+h3{
+  text-align: center;
+  margin: 15px 0;
+  font-size: 1.7rem;
+}
+
 .app{
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
-  header h3{
-    text-align: center;
-    margin: 15px 0;
-  }
   section{
     flex: 1 1 auto;
     text-align: center;
@@ -35,6 +37,9 @@ code {
 }
 .card{
   margin: 10px;
+  padding: 10px;
+  // width: 250px;
+  height: 300px;
   text-align: center;
   select{
     margin: 0 auto;
