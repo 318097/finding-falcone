@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
 
 import Card from './Card';
+
+import { getToken, setToken, extractNames } from '../utils';
 
 const CardWrapper = styled.div`
   display: flex;
@@ -11,7 +14,7 @@ const CardWrapper = styled.div`
   justify-content: center;
 `
 
-const noOfCards = Array(4).fill(0);
+const totalDestinations = Array(4).fill(0);
 
 const Home = ({ history }) => {
   const [planets, setPlanets] = useState([]);
@@ -20,13 +23,8 @@ const Home = ({ history }) => {
   const [selectedPlanets, setSelectedPlanets] = useState({});
   const [selectedVehicles, setSelectedVehicles] = useState({});
 
-  const setData = (type, key, value) => {
-    if (type === 'PLANETS')
-      setSelectedPlanets(data => ({ ...data, [key]: value }));
-    else
-      setSelectedVehicles(data => ({ ...data, [key]: value }));
-    setTimeout(() => console.log(selectedPlanets, selectedVehicles), 1000);
-  }
+  const [totalTime, setTotalTime] = useState(0);
+  const [disableSubmitButton, setDisableSubmitButton] = useState(false);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -46,6 +44,7 @@ const Home = ({ history }) => {
         }
       });
 
+      setToken(token);
       fetchPlanets();
       fetchVehicles();
     };
@@ -53,25 +52,110 @@ const Home = ({ history }) => {
     fetchToken();
   }, []);
 
-  const handleClick = () => history.push(`/results`);
+  useEffect(() => {
+    const calculateTotalTime = () => {
+      let total = 0;
+      totalDestinations.forEach((_, index) => {
+        const vehicle = selectedVehicles[`input${index + 1}`];
+        const planet = selectedPlanets[`input${index + 1}`];
+
+        if (vehicle && planet) total += (planet.distance / vehicle.speed);
+      });
+      setTotalTime(total);
+    };
+    calculateTotalTime();
+  }, [selectedPlanets, selectedVehicles]);
+
+  useEffect(() => {
+    const disableSubmitButtonStatus = totalDestinations.reduce((acc, _, index) => acc || !selectedVehicles[`input${index + 1}`], false);
+    setDisableSubmitButton(disableSubmitButtonStatus);
+  }, [selectedVehicles]);
+
+  const setData = (type, key, value) => {
+    if (type === 'PLANETS') setSelectedPlanets(data => ({ ...data, [key]: value }));
+    else setSelectedVehicles(data => ({ ...data, [key]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const inputData = {
+        token: getToken(),
+        planet_names: extractNames(selectedPlanets),
+        vehicle_names: extractNames(selectedVehicles),
+      };
+
+      const { data } = await axios.post('/find', inputData, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      if (data.status === 'success') {
+        const query = queryString.stringify({ planetName: data.planet_name, totalTime, success: true });
+        history.push(`/results?${query}`);
+      }
+    } catch (err) {
+
+    }
+  };
 
   return (
     <section>
       <h3>Select the planets you want to search in:</h3>
       <CardWrapper>
-        {noOfCards.map((item, index) => {
-          return (
-            <Card
-              key={index}
-              id={index + 1}
-              vehicles={vehicles}
-              planets={planets}
-              setData={setData}
-            />
-          )
-        })}
+        {
+          totalDestinations.map((_, index) => {
+            const availablePlanets = planets.filter(planet => {
+              const unavailablePlanets = extractNames(selectedPlanets);
+              if (
+                selectedPlanets[`input${index + 1}`] &&
+                selectedPlanets[`input${index + 1}`]['name'] === planet.name
+              )
+                return true;
+
+              if (unavailablePlanets.includes(planet.name))
+                return false;
+
+              return true;
+            });
+
+            const availableVehicles = vehicles.map(vehicle => {
+              let totalQuantityUsed = 0;
+              for (let i = 1; i <= index + 1; i++) {
+                if (selectedVehicles[`input${i}`] && selectedVehicles[`input${i}`]['name'] === vehicle.name)
+                  totalQuantityUsed++;
+              }
+
+              return {
+                ...vehicle,
+                total_no: vehicle.total_no - totalQuantityUsed
+              };
+            });
+
+            return (
+              <Card
+                key={index}
+                id={index + 1}
+                planets={availablePlanets}
+                selectedPlanet={selectedPlanets[`input${index + 1}`]}
+                vehicles={availableVehicles}
+                selectedVehicle={selectedVehicles[`input${index + 1}`]}
+                setData={setData}
+              />
+            );
+          })
+        }
       </CardWrapper>
-      <button className="submit-button paper-btn btn-primary" onClick={handleClick}>Find Falcone</button>
+      <div>
+        Time taken: {totalTime}
+      </div>
+      <button
+        disabled={disableSubmitButton}
+        className="submit-button paper-btn btn-primary"
+        onClick={handleSubmit}
+      >
+        Find Falcone
+      </button>
     </section>
   );
 };
