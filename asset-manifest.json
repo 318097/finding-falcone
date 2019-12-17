@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/finding-falcone/static/css/main.542f3c0a.chunk.css",
+    "main.js": "/finding-falcone/static/js/main.06353f68.chunk.js",
+    "main.js.map": "/finding-falcone/static/js/main.06353f68.chunk.js.map",
+    "runtime-main.js": "/finding-falcone/static/js/runtime-main.48692ed8.js",
+    "runtime-main.js.map": "/finding-falcone/static/js/runtime-main.48692ed8.js.map",
+    "static/css/2.8eca03d6.chunk.css": "/finding-falcone/static/css/2.8eca03d6.chunk.css",
+    "static/js/2.84b282c2.chunk.js": "/finding-falcone/static/js/2.84b282c2.chunk.js",
+    "static/js/2.84b282c2.chunk.js.map": "/finding-falcone/static/js/2.84b282c2.chunk.js.map",
+    "index.html": "/finding-falcone/index.html",
+    "precache-manifest.a564972e7c909b2bca1b2c6473bdbbd2.js": "/finding-falcone/precache-manifest.a564972e7c909b2bca1b2c6473bdbbd2.js",
+    "service-worker.js": "/finding-falcone/service-worker.js",
+    "static/css/2.8eca03d6.chunk.css.map": "/finding-falcone/static/css/2.8eca03d6.chunk.css.map",
+    "static/css/main.542f3c0a.chunk.css.map": "/finding-falcone/static/css/main.542f3c0a.chunk.css.map",
+    "static/js/2.84b282c2.chunk.js.LICENSE": "/finding-falcone/static/js/2.84b282c2.chunk.js.LICENSE",
+    "static/media/index.scss": "/finding-falcone/static/media/old_wall.057805ab.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.48692ed8.js",
+    "static/css/2.8eca03d6.chunk.css",
+    "static/js/2.84b282c2.chunk.js",
+    "static/css/main.542f3c0a.chunk.css",
+    "static/js/main.06353f68.chunk.js"
+  ]
+}
