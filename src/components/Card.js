@@ -25,6 +25,7 @@ const Card = ({
     <div className="card">
       <div className="card-body">
         <h4>Destination {id}</h4>
+
         <select value={selectedPlanet.name} placeholder="Select Planet" onChange={handlePlanetSelect}>
           <option disabled value="default">Select</option>
           {planets.map(({ name }) => (
@@ -36,11 +37,11 @@ const Card = ({
             </option>
           ))}
         </select>
-
+        <br />
         {
           showVehicleOptions &&
           (
-            <div style={{ marginTop: '15px' }}>
+            <div>
               {
                 vehicles.map((vehicle, index) => {
                   const { name, total_no, max_distance } = vehicle;
@@ -51,18 +52,16 @@ const Card = ({
                       key={name}
                       htmlFor={`radio${id}${index}`}
                       className="paper-radio"
-                      style={{ display: 'block', textAlign: 'left' }}
                     >
                       <input
                         disabled={disableRadioButton}
                         onChange={handleVehicleSelect}
-                        style={{ display: 'inline' }}
                         type="radio"
                         name={`paperRadio${id}`}
                         id={`radio${id}${index}`}
                         value={name}
                       />
-                      <span style={{ textDecoration: disableRadioButton && 'line-through' }}>{name}({Math.max(0, total_no)})</span>
+                      <span className={`${disableRadioButton && 'disable-radio-button'}`}>{name}({Math.max(0, total_no)})</span>
                     </label>
                   );
                 })

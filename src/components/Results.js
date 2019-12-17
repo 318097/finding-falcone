@@ -18,8 +18,8 @@ const Results = ({ history, location }) => {
               <p>
                 Success! Congratulations on Finding Falcone. King Shan is mighty pleased.
               </p>
-              <span>Time taken: {result.totalTime}</span><br />
-              <span>Planet found: {result.planetName}</span>
+              <span className="bold">Time taken: <span className="success">{result.totalTime}</span></span><br />
+              <span className="bold">Planet found: <span className="success">{result.planetName}</span></span>
             </div>
           ) : (
             <div>
@@ -29,7 +29,7 @@ const Results = ({ history, location }) => {
       }
 
       <br />
-      <button onClick={() => history.push('/home')}>Start Again</button>
+      <button className="btn-success" onClick={() => history.push('/home')}>Start Again</button>
     </section>
   );
 };

@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 
 import Card from './Card';
+import AlertBox from './AlertBox';
 
 import { getToken, setToken, extractNames } from '../utils';
 
 const CardWrapper = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
 `
 
@@ -25,6 +27,7 @@ const Home = ({ history }) => {
 
   const [totalTime, setTotalTime] = useState(0);
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+  const [alertBoxStatus, setAlertBoxStatus] = useState(null);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -53,6 +56,7 @@ const Home = ({ history }) => {
   }, []);
 
   useEffect(() => {
+
     const calculateTotalTime = () => {
       let total = 0;
       totalDestinations.forEach((_, index) => {
@@ -63,12 +67,15 @@ const Home = ({ history }) => {
       });
       setTotalTime(total);
     };
+
     calculateTotalTime();
   }, [selectedPlanets, selectedVehicles]);
 
   useEffect(() => {
+
     const disableSubmitButtonStatus = totalDestinations.reduce((acc, _, index) => acc || !selectedVehicles[`input${index + 1}`], false);
     setDisableSubmitButton(disableSubmitButtonStatus);
+
   }, [selectedVehicles]);
 
   const setData = (type, key, value) => {
@@ -90,73 +97,77 @@ const Home = ({ history }) => {
           'Content-Type': 'application/json'
         }
       });
-      if (data.status === 'success') {
-        const query = queryString.stringify({ planetName: data.planet_name, totalTime, success: true });
-        history.push(`/results?${query}`);
-      }
-    } catch (err) {
 
+      const query = queryString.stringify({ planetName: data.planet_name, totalTime, success: data.status });
+      history.push(`/results?${query}`);
+    } catch (err) {
+      setAlertBoxStatus('Error: Refresh page or try again later.');
+      setTimeout(() => setAlertBoxStatus(null), 3000);
     }
   };
 
   return (
-    <section>
-      <h3>Select the planets you want to search in:</h3>
-      <CardWrapper>
-        {
-          totalDestinations.map((_, index) => {
-            const availablePlanets = planets.filter(planet => {
-              const unavailablePlanets = extractNames(selectedPlanets);
-              if (
-                selectedPlanets[`input${index + 1}`] &&
-                selectedPlanets[`input${index + 1}`]['name'] === planet.name
-              )
+    <Fragment>
+      {alertBoxStatus && <AlertBox message={alertBoxStatus} />}
+      <section>
+        <h4>Select the planets you want to search in:</h4>
+        <CardWrapper>
+          {
+            totalDestinations.map((_, index) => {
+              const availablePlanets = planets.filter(planet => {
+                const unavailablePlanets = extractNames(selectedPlanets);
+                if (
+                  selectedPlanets[`input${index + 1}`] &&
+                  selectedPlanets[`input${index + 1}`]['name'] === planet.name
+                )
+                  return true;
+
+                if (unavailablePlanets.includes(planet.name))
+                  return false;
+
                 return true;
+              });
 
-              if (unavailablePlanets.includes(planet.name))
-                return false;
+              const availableVehicles = vehicles.map(vehicle => {
+                let totalQuantityUsed = 0;
+                for (let i = 1; i <= index + 1; i++) {
+                  if (selectedVehicles[`input${i}`] && selectedVehicles[`input${i}`]['name'] === vehicle.name)
+                    totalQuantityUsed++;
+                }
 
-              return true;
-            });
+                return {
+                  ...vehicle,
+                  total_no: vehicle.total_no - totalQuantityUsed
+                };
+              });
 
-            const availableVehicles = vehicles.map(vehicle => {
-              let totalQuantityUsed = 0;
-              for (let i = 1; i <= index + 1; i++) {
-                if (selectedVehicles[`input${i}`] && selectedVehicles[`input${i}`]['name'] === vehicle.name)
-                  totalQuantityUsed++;
-              }
-
-              return {
-                ...vehicle,
-                total_no: vehicle.total_no - totalQuantityUsed
-              };
-            });
-
-            return (
-              <Card
-                key={index}
-                id={index + 1}
-                planets={availablePlanets}
-                selectedPlanet={selectedPlanets[`input${index + 1}`]}
-                vehicles={availableVehicles}
-                selectedVehicle={selectedVehicles[`input${index + 1}`]}
-                setData={setData}
-              />
-            );
-          })
-        }
-      </CardWrapper>
-      <div>
-        Time taken: {totalTime}
-      </div>
-      <button
-        disabled={disableSubmitButton}
-        className="submit-button paper-btn btn-primary"
-        onClick={handleSubmit}
-      >
-        Find Falcone
-      </button>
-    </section>
+              return (
+                <Card
+                  key={index}
+                  id={index + 1}
+                  planets={availablePlanets}
+                  selectedPlanet={selectedPlanets[`input${index + 1}`]}
+                  vehicles={availableVehicles}
+                  selectedVehicle={selectedVehicles[`input${index + 1}`]}
+                  setData={setData}
+                />
+              );
+            })
+          }
+        </CardWrapper>
+        <br />
+        <div className="bold">
+          Time taken: {totalTime}
+        </div>
+        <button
+          disabled={disableSubmitButton}
+          className="submit-button paper-btn btn-success"
+          onClick={handleSubmit}
+        >
+          Find Falcone
+        </button>
+      </section>
+    </Fragment>
   );
 };
 
