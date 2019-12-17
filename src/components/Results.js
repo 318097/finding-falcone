@@ -12,7 +12,12 @@ const Results = ({ history, location }) => {
   return (
     <section>
       {
-        result.success ?
+        (!result.success || result.success === 'false') ?
+          (
+            <div>
+              <p>Failed! Could not find Falcone in targeted destinations.</p>
+            </div>
+          ) :
           (
             <div>
               <p>
@@ -20,10 +25,6 @@ const Results = ({ history, location }) => {
               </p>
               <span className="bold">Time taken: <span className="success">{result.totalTime}</span></span><br />
               <span className="bold">Planet found: <span className="success">{result.planetName}</span></span>
-            </div>
-          ) : (
-            <div>
-              <p>Failed! Could not find Falcone in targeted destinations.</p>
             </div>
           )
       }
