@@ -9,6 +9,8 @@ import AlertBox from './AlertBox';
 
 import { getToken, setToken, extractNames } from '../utils';
 
+import spinner from '../assets/loader/spinner.svg';
+
 const CardWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -26,7 +28,9 @@ const Home = ({ history }) => {
   const [selectedVehicles, setSelectedVehicles] = useState({});
 
   const [totalTime, setTotalTime] = useState(0);
+
   const [disableSubmitButton, setDisableSubmitButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [alertBoxStatus, setAlertBoxStatus] = useState(null);
 
   useEffect(() => {
@@ -56,7 +60,6 @@ const Home = ({ history }) => {
   }, []);
 
   useEffect(() => {
-
     const calculateTotalTime = () => {
       let total = 0;
       totalDestinations.forEach((_, index) => {
@@ -72,10 +75,8 @@ const Home = ({ history }) => {
   }, [selectedPlanets, selectedVehicles]);
 
   useEffect(() => {
-
     const disableSubmitButtonStatus = totalDestinations.reduce((acc, _, index) => acc || !selectedVehicles[`input${index + 1}`], false);
     setDisableSubmitButton(disableSubmitButtonStatus);
-
   }, [selectedVehicles]);
 
   const setData = (type, key, value) => {
@@ -84,6 +85,8 @@ const Home = ({ history }) => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setDisableSubmitButton(true);
     try {
       const inputData = {
         token: getToken(),
@@ -103,6 +106,9 @@ const Home = ({ history }) => {
     } catch (err) {
       setAlertBoxStatus('Error: Refresh page or try again later.');
       setTimeout(() => setAlertBoxStatus(null), 3000);
+    } finally {
+      setLoading(false);
+      setDisableSubmitButton(false);
     }
   };
 
@@ -156,15 +162,22 @@ const Home = ({ history }) => {
           }
         </CardWrapper>
         <br />
-        <div className="bold">
+        <p className="bold">
           Time taken: {totalTime}
-        </div>
+        </p>
         <button
           disabled={disableSubmitButton}
           className="submit-button paper-btn btn-success"
           onClick={handleSubmit}
         >
-          Find Falcone
+          <span>
+            Find Falcone
+          </span>
+          {
+            loading && (
+              <div className="loader"></div>
+            )
+          }
         </button>
       </section>
     </Fragment>
