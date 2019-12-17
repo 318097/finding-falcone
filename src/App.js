@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 import Header from './components/layouts/Header';
@@ -15,14 +15,14 @@ const App = () => {
   return (
     <div className="app">
       <Header />
-      <BrowserRouter>
+      <HashRouter basename='/'>
         <Switch>
           <Route path="/home" exact component={Home} />
           <Route path="/results" exact component={Results} />
           <Route path="/" exact render={() => <Redirect to="/home" />} />
           <Route component={NotFound} />
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
       <Footer />
     </div>
   );

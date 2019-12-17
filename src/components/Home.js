@@ -9,8 +9,6 @@ import AlertBox from './AlertBox';
 
 import { getToken, setToken, extractNames } from '../utils';
 
-import spinner from '../assets/loader/spinner.svg';
-
 const CardWrapper = styled.div`
   display: flex;
   align-items: center;
