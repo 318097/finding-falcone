@@ -1,11 +1,18 @@
 # Geektrust coding problem - Finding Falcone
+
 - [Github](https://github.com/318097/finding-falcone "Repo Link")
 - [Public URL](https://318097.github.io/finding-falcone/#/home "Public URL")
 
+## Preview
+
+![Preview](finding-falcone.gif)
+
 ## Available scripts
+
 - `yarn start` - Start the application.
 
 ## Dependencies
+
 - `react-router-dom` - Routing & Navigation.
 - `papercss` - The default css styling and theme.
 - `axios` - HTTP requests.
